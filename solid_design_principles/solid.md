@@ -1,4 +1,10 @@
 # SOLID Design Principles
+ 
+ - SRP
+ - OCP
+ - LSP
+ - LSP
+ - DIP
 
 ## Single Responsibility Principle (SRP)
 
@@ -179,6 +185,111 @@ auto green_large_things = BetterFilter::filter(all, green_and_large);
 
 ```
 
+## Liskov Substitution Principle (LSP)
+
+```cpp
+class Rectangle {
+protected :
+    int width, height;
+
+public :
+    Rectangle(const int w, const int h)
+    : width(w), height(h) {}
+
+    int get_width() const { return width; }
+    int get_height() const { return height; }
+
+    virtual void set_width(const int w) { this->width = w; }
+    virtual void set_height(const int h) {this->height = h; }
+};
+
+class Square : public Rectangle {
+public :
+    Square(int size) : Rectangle(size, size) {}
+
+    vodi set_width(const int w) override {
+        this->width = w;
+        this->height = w;
+    }
+
+    void set_height(const int h) override {
+        this->width = h;
+        this->height = h;
+    }
+};
+
+void process(Rectangle& r) {
+    int w = r.get_width();
+    r.set_height(10);
+
+    cout << "expected area : " << (w * 10) << endl;
+    cout << "get           : " << r.area() << endl;
+}
+
+Square s(5);
+process(s); // expected are : 50
+            // get          : 25;
+```
+
+factory class solution
+```cpp
+class RectangleFactory {
+public :
+    static Rectangle create_rectangle(int w, int h);
+    static Rectangle create_square(int size);
+};
+```
+
+## Interface Segregation Principle (ISP)
+
+```cpp
+class IMachine {
+public :
+    virtual void print(vector<Document*> docs) = 0;
+    virtual void fax(vector<Document*> docs) = 0;
+    virtual void scan(vector<Document*> docs) = 0;
+};
+```
+
+```cpp
+class IPrinter {
+public :
+    virtual void print(vector<Document*> docs) = 0;
+};
+
+class IFax {
+public :
+    virtual void fax(vector<Document*> docs) = 0;
+};
+
+class IScanner {
+public :
+    virtual void scan(vector<Document*> docs) = 0;
+};
+
+class IMachine : IPrinter, IScanner {
+};
+
+class Machine : IMachine {
+private :
+    IPrinter& printer;
+    IScanner& scanner;
+
+public :
+    Machine(IPrinter& printer, IScanner& scanner) 
+    : printer(printer), scanner(scanner) {}
+
+    void print(vector<Document*> docs) override {
+        printer.print(docs);
+    }
+
+    void scan(vector<Document*> docs) override {
+        scanner.scan(docs);
+    }
+};
+```
+
+## Dependency Inversion Principle (DIP)
 
 
 
